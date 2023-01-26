@@ -4,6 +4,9 @@ using RebbitContracts.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace RebbitContracts.Defenitions
 {
@@ -56,6 +59,11 @@ namespace RebbitContracts.Defenitions
                     requestTypes.ForEach(type => x.AddRequestClient(type));
                 }
             });
+
+            var httpClient = new HttpClient();
+            var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{massTransitSettings.UserName}:{massTransitSettings.Password}"));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+            var response = httpClient.PutAsync($"http://{massTransitSettings.Url}:{massTransitSettings.Port}/api/vhosts/{massTransitSettings.VirtualHost}", null);
         }
     }
 
